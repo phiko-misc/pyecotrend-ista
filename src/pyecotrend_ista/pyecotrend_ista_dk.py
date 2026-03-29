@@ -31,6 +31,13 @@ JsonResponse: TypeAlias = JsonDict | JsonList
 _VALID_METER_TYPES: tuple[str, ...] = ("Electricity", "Heat")
 _VALID_DATA_TYPES: tuple[str, ...] = ("Consumption", "Economy")
 _VALID_INTERVALS: tuple[str, ...] = ("billing", "day", "week", "month", "year")
+_INTERVAL_TO_VALUE: dict[DkGraphInterval, str] = {
+    "day": "1",
+    "week": "2",
+    "month": "3",
+    "year": "4",
+    "billing": "5",
+}
 
 
 class PyEcotrendIstaDK:  # numpydoc ignore=PR01
@@ -179,7 +186,18 @@ class PyEcotrendIstaDK:  # numpydoc ignore=PR01
         if interval not in _VALID_INTERVALS:
             raise ValueError(f"Invalid interval '{interval}'. Allowed values: {_VALID_INTERVALS}")
 
-        path = f"{meter_type}/{data_type}/{interval}"
+        interval_value = _INTERVAL_TO_VALUE[interval]
+
+        # Keep endpoint/query naming exactly as defined in the Postman Ista collection.
+        if meter_type == "Heat" and data_type == "Economy":
+            path = f"Overview/Economy_Heat_Data?inverval={interval_value}"
+        elif meter_type == "Heat" and data_type == "Consumption":
+            path = f"Overview/Usage_Heat_Data?inverval={interval_value}"
+        elif meter_type == "Electricity" and data_type == "Economy":
+            path = f"Overview/Economy_Electricity_Data?inverval={interval_value}"
+        else:
+            path = f"Overview/Usage_Electricity_Data?interval={interval_value}"
+
         return cast(ElectricityConsumptionResponse, self._get_dk_graph(path))
 
     def get_electricity_consumption(

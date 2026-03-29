@@ -34,6 +34,14 @@ _DK_TOKEN_PAYLOAD = {
     "Key": "Value",
 }
 
+_INTERVAL_TO_VALUE = {
+    "day": "1",
+    "week": "2",
+    "month": "3",
+    "year": "4",
+    "billing": "5",
+}
+
 
 def _load_dk_graph_data(meter_type: str, data_type: str, interval: str) -> str:
     """Load DK graph JSON fixture payload."""
@@ -44,6 +52,18 @@ def _load_dk_graph_data(meter_type: str, data_type: str, interval: str) -> str:
 def _mock_dk_token(requests_mock: RequestsMock) -> None:
     """Mock DK token endpoint with a shared payload."""
     requests_mock.post(API_BASE_URL_DK + "token", json=_DK_TOKEN_PAYLOAD)
+
+
+def _build_dk_graph_path(meter_type: str, data_type: str, interval: str) -> str:
+    """Build graph path exactly as defined in the Postman Ista collection."""
+    interval_value = _INTERVAL_TO_VALUE[interval]
+    if meter_type == "Heat" and data_type == "Economy":
+        return f"Overview/Economy_Heat_Data?inverval={interval_value}"
+    if meter_type == "Heat" and data_type == "Consumption":
+        return f"Overview/Usage_Heat_Data?inverval={interval_value}"
+    if meter_type == "Electricity" and data_type == "Economy":
+        return f"Overview/Economy_Electricity_Data?inverval={interval_value}"
+    return f"Overview/Usage_Electricity_Data?interval={interval_value}"
 
 
 @pytest.mark.usefixtures("mock_requests_login_dk")
@@ -121,10 +141,11 @@ def test_dk_get_graph_data_snapshot(
 ) -> None:
     """Snapshot test for representative DK graph endpoint responses."""
     payload = _load_dk_graph_data(meter_type, data_type, interval)
+    graph_path = _build_dk_graph_path(meter_type, data_type, interval)
 
     _mock_dk_token(requests_mock)
     requests_mock.get(
-        f"{GRAPHS_API_BASE_URL_DK}{meter_type}/{data_type}/{interval}",
+        f"{GRAPHS_API_BASE_URL_DK}{graph_path}",
         text=payload,
     )
 
@@ -143,10 +164,11 @@ def test_dk_get_graph_data(
 ) -> None:
     """Test DK graph endpoint for all supported meter/data/interval combinations."""
     payload = _load_dk_graph_data(meter_type, data_type, interval)
+    graph_path = _build_dk_graph_path(meter_type, data_type, interval)
 
     _mock_dk_token(requests_mock)
     requests_mock.get(
-        f"{GRAPHS_API_BASE_URL_DK}{meter_type}/{data_type}/{interval}",
+        f"{GRAPHS_API_BASE_URL_DK}{graph_path}",
         text=payload,
     )
 
@@ -215,10 +237,11 @@ def test_dk_interval_convenience_methods(
 ) -> None:
     """Test DK convenience methods for interval-specific graph endpoints."""
     payload = _load_dk_graph_data(meter_type, data_type, interval)
+    graph_path = _build_dk_graph_path(meter_type, data_type, interval)
 
     _mock_dk_token(requests_mock)
     requests_mock.get(
-        f"{GRAPHS_API_BASE_URL_DK}{meter_type}/{data_type}/{interval}",
+        f"{GRAPHS_API_BASE_URL_DK}{graph_path}",
         text=payload,
     )
 
