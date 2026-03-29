@@ -22,7 +22,7 @@ from .const import API_BASE_URL, DEMO_USER_ACCOUNT, VERSION
 from .exception_classes import KeycloakError, LoginError, ParserError, ServerError
 from .helper_object_de import CustomRaw
 from .login_helper import LoginHelper
-from .types import AccountResponse, ConsumptionsResponse, ConsumptionUnitDetailsResponse, GetTokenResponse
+from .types import AccountResponseDE, ConsumptionsResponse, ConsumptionUnitDetailsResponse, GetTokenResponse
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -60,7 +60,7 @@ class PyEcotrendIsta:  # numpydoc ignore=PR01
     >>> client.login()
     """
 
-    _account: AccountResponse
+    _account: AccountResponseDE
     _uuid: str
     _access_token: str | None = None
     _refresh_token: str | None = None
@@ -264,7 +264,7 @@ class PyEcotrendIsta:  # numpydoc ignore=PR01
         except requests.RequestException as exc:
             raise ServerError("Loading account information failed due to a request exception") from exc
 
-        self._account = cast(AccountResponse, data)
+        self._account = cast(AccountResponseDE, data)
         self._uuid = data["activeConsumptionUnit"]
 
     def get_version(self) -> str:  # numpydoc ignore=EX01,ES01
@@ -997,7 +997,7 @@ class PyEcotrendIsta:  # numpydoc ignore=PR01
         except requests.RequestException as exc:
             raise ServerError("Demo user authentication failed due to a request exception") from exc
 
-    def get_account(self) -> AccountResponse | None:  # numpydoc ignore=ES01,EX01
+    def get_account(self) -> AccountResponseDE | None:  # numpydoc ignore=ES01,EX01
         """
         Retrieve the account information.
 

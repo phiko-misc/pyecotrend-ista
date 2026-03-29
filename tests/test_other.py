@@ -8,14 +8,14 @@ from syrupy.assertion import SnapshotAssertion
 
 from pyecotrend_ista import PyEcotrendIsta
 from pyecotrend_ista.const import VERSION
-from pyecotrend_ista.types import AccountResponse
+from pyecotrend_ista.types import AccountResponseDE
 
 
 def test_get_uuids(ista_client: PyEcotrendIsta) -> None:
     """Test `get_uuids` method."""
 
 
-    ista_client._account = cast(AccountResponse , { # pylint: disable=W0212
+    ista_client._account = cast(AccountResponseDE , { # pylint: disable=W0212
         "residentAndConsumptionUuidsMap": {
             "17c4dff7-799f-4f16-badc-a9b3607a9383": "7a226e08-2a90-4db9-ae9b-8148901c6ec2",
             "756a591c-185b-4441-a21a-46d4b94df4ad": "df3e8a64-a622-4ffb-97c5-b892a2cf331d",

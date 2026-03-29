@@ -5,6 +5,8 @@ from pyecotrend_ista.__version import __version__
 VERSION = __version__
 
 API_BASE_URL = "https://api.prod.eed.ista.com/"
+API_BASE_URL_DK = "https://prod.istaonlinebeta.dk/"
+GRAPHS_API_BASE_URL_DK = "https://graphs.istaonlinebeta.dk/"
 
 DEMO_USER_ACCOUNT = "demo@ista.de"
 

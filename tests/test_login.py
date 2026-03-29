@@ -21,10 +21,10 @@ def test_login(ista_client: PyEcotrendIsta, force_login: bool) -> None:
 
 
 @pytest.mark.usefixtures("mock_requests_login")
-def test_logout(ista_client: PyEcotrendIsta, mock_requests_login: RequestsMock) -> None:
+def test_logout(ista_client: PyEcotrendIsta, mock_requests_login_de: RequestsMock) -> None:
     """Test Login method."""
     ista_client.logout()
-    assert mock_requests_login.called_once
+    assert mock_requests_login_de.called_once
 
 
 @pytest.mark.parametrize("ista_client", [DEMO_EMAIL], indirect=True)
