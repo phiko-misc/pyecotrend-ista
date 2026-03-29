@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from http import HTTPStatus
 import logging
-from typing import Literal, TypeAlias, cast
+from typing import Any, Literal, TypeAlias, cast
 
 import requests
 
@@ -24,6 +24,9 @@ _LOGGER = logging.getLogger(__name__)
 DkGraphMeterType: TypeAlias = Literal["Electricity", "Heat"]
 DkGraphDataType: TypeAlias = Literal["Consumption", "Economy"]
 DkGraphInterval: TypeAlias = Literal["billing", "day", "week", "month", "year"]
+JsonDict: TypeAlias = dict[str, Any]
+JsonList: TypeAlias = list[JsonDict]
+JsonResponse: TypeAlias = JsonDict | JsonList
 
 _VALID_METER_TYPES: tuple[str, ...] = ("Electricity", "Heat")
 _VALID_DATA_TYPES: tuple[str, ...] = ("Consumption", "Economy")
@@ -96,7 +99,7 @@ class PyEcotrendIstaDK:  # numpydoc ignore=PR01
         self._header["Authorization"] = f"Bearer {self._access_token}"
         return self._access_token
 
-    def _get_dk(self, path: str):
+    def _get_dk(self, path: str) -> JsonResponse:
         """Perform authenticated GET requests against the DK base API."""
         self.login()
         url = f"{API_BASE_URL_DK}{path}"
@@ -120,7 +123,7 @@ class PyEcotrendIstaDK:  # numpydoc ignore=PR01
         except requests.RequestException as exc:
             raise ServerError(f"Loading DK data for '{path}' failed due to a request exception") from exc
 
-    def _get_dk_graph(self, path: str):
+    def _get_dk_graph(self, path: str) -> JsonResponse:
         """Perform authenticated GET requests against the DK graphs API."""
         self.login()
         url = f"{GRAPHS_API_BASE_URL_DK}{path}"
