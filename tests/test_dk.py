@@ -14,11 +14,36 @@ from syrupy.assertion import SnapshotAssertion
 from pyecotrend_ista import LoginError, ParserError, PyEcotrendIstaDK, ServerError
 from pyecotrend_ista.const import API_BASE_URL_DK, GRAPHS_API_BASE_URL_DK
 
+_DK_TOKEN_PAYLOAD = {
+    "access_token": "ACCESS_TOKEN",
+    "token_type": "bearer",
+    "expires_in": "3600",
+    ".issued": "9999-12-24 00:00:00Z",
+    ".expires": "9999-12-24 00:00:00Z",
+    "Email": "",
+    "Phone": "",
+    "FirstName": "Max Istamann",
+    "InstanceId": "0",
+    "Language": "da-DK",
+    "Username": "0000000000000",
+    "PortalAdminId": "0",
+    "ConsId": "00000000000",
+    "isTenant": "true",
+    "InstId": "000000000",
+    "isAdmin": "false",
+    "Key": "Value",
+}
+
 
 def _load_dk_graph_data(meter_type: str, data_type: str, interval: str) -> str:
     """Load DK graph JSON fixture payload."""
     path = Path(__file__).parent / "data" / "DK" / meter_type / data_type / f"{interval}.json"
     return path.read_text(encoding="utf-8")
+
+
+def _mock_dk_token(requests_mock: RequestsMock) -> None:
+    """Mock DK token endpoint with a shared payload."""
+    requests_mock.post(API_BASE_URL_DK + "token", json=_DK_TOKEN_PAYLOAD)
 
 
 @pytest.mark.usefixtures("mock_requests_login_dk")
@@ -97,28 +122,7 @@ def test_dk_get_graph_data_snapshot(
     """Snapshot test for representative DK graph endpoint responses."""
     payload = _load_dk_graph_data(meter_type, data_type, interval)
 
-    requests_mock.post(
-        API_BASE_URL_DK + "token",
-        json={
-            "access_token": "ACCESS_TOKEN",
-            "token_type": "bearer",
-            "expires_in": "3600",
-            ".issued": "9999-12-24 00:00:00Z",
-            ".expires": "9999-12-24 00:00:00Z",
-            "Email": "",
-            "Phone": "",
-            "FirstName": "Max Istamann",
-            "InstanceId": "0",
-            "Language": "da-DK",
-            "Username": "0000000000000",
-            "PortalAdminId": "0",
-            "ConsId": "00000000000",
-            "isTenant": "true",
-            "InstId": "000000000",
-            "isAdmin": "false",
-            "Key": "Value",
-        },
-    )
+    _mock_dk_token(requests_mock)
     requests_mock.get(
         f"{GRAPHS_API_BASE_URL_DK}{meter_type}/{data_type}/{interval}",
         text=payload,
@@ -140,28 +144,7 @@ def test_dk_get_graph_data(
     """Test DK graph endpoint for all supported meter/data/interval combinations."""
     payload = _load_dk_graph_data(meter_type, data_type, interval)
 
-    requests_mock.post(
-        API_BASE_URL_DK + "token",
-        json={
-            "access_token": "ACCESS_TOKEN",
-            "token_type": "bearer",
-            "expires_in": "3600",
-            ".issued": "9999-12-24 00:00:00Z",
-            ".expires": "9999-12-24 00:00:00Z",
-            "Email": "",
-            "Phone": "",
-            "FirstName": "Max Istamann",
-            "InstanceId": "0",
-            "Language": "da-DK",
-            "Username": "0000000000000",
-            "PortalAdminId": "0",
-            "ConsId": "00000000000",
-            "isTenant": "true",
-            "InstId": "000000000",
-            "isAdmin": "false",
-            "Key": "Value",
-        },
-    )
+    _mock_dk_token(requests_mock)
     requests_mock.get(
         f"{GRAPHS_API_BASE_URL_DK}{meter_type}/{data_type}/{interval}",
         text=payload,
@@ -172,28 +155,7 @@ def test_dk_get_graph_data(
 
 def test_dk_get_user_info_http_error(requests_mock: RequestsMock, ista_client_dk: PyEcotrendIstaDK) -> None:
     """Test DK unauthorized error mapping."""
-    requests_mock.post(
-        API_BASE_URL_DK + "token",
-        json={
-            "access_token": "ACCESS_TOKEN",
-            "token_type": "bearer",
-            "expires_in": "3600",
-            ".issued": "9999-12-24 00:00:00Z",
-            ".expires": "9999-12-24 00:00:00Z",
-            "Email": "",
-            "Phone": "",
-            "FirstName": "Max Istamann",
-            "InstanceId": "0",
-            "Language": "da-DK",
-            "Username": "0000000000000",
-            "PortalAdminId": "0",
-            "ConsId": "00000000000",
-            "isTenant": "true",
-            "InstId": "000000000",
-            "isAdmin": "false",
-            "Key": "Value",
-        },
-    )
+    _mock_dk_token(requests_mock)
     requests_mock.get(f"{API_BASE_URL_DK}api/GetUserInfo", status_code=HTTPStatus.UNAUTHORIZED)
 
     with pytest.raises(expected_exception=LoginError):
@@ -202,28 +164,7 @@ def test_dk_get_user_info_http_error(requests_mock: RequestsMock, ista_client_dk
 
 def test_dk_get_user_info_parse_error(requests_mock: RequestsMock, ista_client_dk: PyEcotrendIstaDK) -> None:
     """Test DK parser error mapping."""
-    requests_mock.post(
-        API_BASE_URL_DK + "token",
-        json={
-            "access_token": "ACCESS_TOKEN",
-            "token_type": "bearer",
-            "expires_in": "3600",
-            ".issued": "9999-12-24 00:00:00Z",
-            ".expires": "9999-12-24 00:00:00Z",
-            "Email": "",
-            "Phone": "",
-            "FirstName": "Max Istamann",
-            "InstanceId": "0",
-            "Language": "da-DK",
-            "Username": "0000000000000",
-            "PortalAdminId": "0",
-            "ConsId": "00000000000",
-            "isTenant": "true",
-            "InstId": "000000000",
-            "isAdmin": "false",
-            "Key": "Value",
-        },
-    )
+    _mock_dk_token(requests_mock)
     requests_mock.get(f"{API_BASE_URL_DK}api/GetUserInfo", text="not-json")
 
     with pytest.raises(expected_exception=ParserError):
@@ -232,28 +173,7 @@ def test_dk_get_user_info_parse_error(requests_mock: RequestsMock, ista_client_d
 
 def test_dk_get_user_info_request_error(requests_mock: RequestsMock, ista_client_dk: PyEcotrendIstaDK) -> None:
     """Test DK request exception mapping."""
-    requests_mock.post(
-        API_BASE_URL_DK + "token",
-        json={
-            "access_token": "ACCESS_TOKEN",
-            "token_type": "bearer",
-            "expires_in": "3600",
-            ".issued": "9999-12-24 00:00:00Z",
-            ".expires": "9999-12-24 00:00:00Z",
-            "Email": "",
-            "Phone": "",
-            "FirstName": "Max Istamann",
-            "InstanceId": "0",
-            "Language": "da-DK",
-            "Username": "0000000000000",
-            "PortalAdminId": "0",
-            "ConsId": "00000000000",
-            "isTenant": "true",
-            "InstId": "000000000",
-            "isAdmin": "false",
-            "Key": "Value",
-        },
-    )
+    _mock_dk_token(requests_mock)
     requests_mock.get(f"{API_BASE_URL_DK}api/GetUserInfo", exc=requests.RequestException)
 
     with pytest.raises(expected_exception=ServerError):
@@ -296,28 +216,7 @@ def test_dk_interval_convenience_methods(
     """Test DK convenience methods for interval-specific graph endpoints."""
     payload = _load_dk_graph_data(meter_type, data_type, interval)
 
-    requests_mock.post(
-        API_BASE_URL_DK + "token",
-        json={
-            "access_token": "ACCESS_TOKEN",
-            "token_type": "bearer",
-            "expires_in": "3600",
-            ".issued": "9999-12-24 00:00:00Z",
-            ".expires": "9999-12-24 00:00:00Z",
-            "Email": "",
-            "Phone": "",
-            "FirstName": "Max Istamann",
-            "InstanceId": "0",
-            "Language": "da-DK",
-            "Username": "0000000000000",
-            "PortalAdminId": "0",
-            "ConsId": "00000000000",
-            "isTenant": "true",
-            "InstId": "000000000",
-            "isAdmin": "false",
-            "Key": "Value",
-        },
-    )
+    _mock_dk_token(requests_mock)
     requests_mock.get(
         f"{GRAPHS_API_BASE_URL_DK}{meter_type}/{data_type}/{interval}",
         text=payload,
