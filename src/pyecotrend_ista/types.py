@@ -179,8 +179,8 @@ class TokenResponse(TypedDict):  # numpydoc ignore=ES01,SA01,EX01
     access_token: str
     token_type: str
     expires_in: str
-    ".issued": str
-    ".expires": str
+    issued: str
+    expires: str
     Email: str
     Phone: str
     FirstName: str

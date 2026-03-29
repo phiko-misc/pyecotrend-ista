@@ -12,6 +12,7 @@ from .exception_classes import (
     ServerError,
 )
 from .pyecotrend_ista import PyEcotrendIsta
+from .pyecotrend_ista_dk import PyEcotrendIstaDK
 from .types import ConsumptionsResponse
 
 __all__ = [
@@ -25,5 +26,6 @@ __all__ = [
     "LoginError",
     "ParserError",
     "PyEcotrendIsta",
+    "PyEcotrendIstaDK",
     "ServerError",
 ]

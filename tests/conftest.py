@@ -7,7 +7,7 @@ import pytest
 import requests_mock
 from requests_mock.mocker import Mocker as RequestsMock
 
-from pyecotrend_ista import PyEcotrendIsta
+from pyecotrend_ista import PyEcotrendIsta, PyEcotrendIstaDK
 from pyecotrend_ista.const import API_BASE_URL, DEMO_USER_ACCOUNT, PROVIDER_URL, API_BASE_URL_DK, GRAPHS_API_BASE_URL_DK
 
 TEST_EMAIL = "max.istamann@test.com"
@@ -33,7 +33,15 @@ def ista_client(request) -> PyEcotrendIsta:
 
 
 @pytest.fixture
-def mock_requests_login_de(requests_mock: RequestsMock) -> RequestsMock:
+def ista_client_dk() -> PyEcotrendIstaDK:
+    """Create DK client instance."""
+    return PyEcotrendIstaDK(
+        email=TEST_EMAIL,
+        password=TEST_PASSWORD,
+    )
+
+@pytest.fixture
+def mock_requests_login(requests_mock: RequestsMock) -> RequestsMock:
     """Mock requests to Login Endpoints."""
     requests_mock.post(
         PROVIDER_URL + "token",
