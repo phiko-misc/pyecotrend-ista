@@ -98,6 +98,11 @@ def test_dk_get_meter_types(ista_client_dk: PyEcotrendIstaDK) -> None:
     assert meter_types["heat"] is not None
 
 
+def test_dk_currency_code_is_iso_4217(ista_client_dk: PyEcotrendIstaDK) -> None:
+    """DK client should expose ISO 4217 currency code for economy values."""
+    assert ista_client_dk.get_currency_code() == "DKK"
+
+
 @pytest.mark.usefixtures("mock_requests_login_dk")
 def test_dk_get_user_info_snapshot(ista_client_dk: PyEcotrendIstaDK, snapshot: SnapshotAssertion) -> None:
     """Snapshot test for DK user info response."""

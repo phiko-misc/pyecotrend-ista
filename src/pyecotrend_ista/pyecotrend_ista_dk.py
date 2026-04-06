@@ -31,6 +31,7 @@ JsonResponse: TypeAlias = JsonDict | JsonList
 _VALID_METER_TYPES: tuple[str, ...] = ("Electricity", "Heat")
 _VALID_DATA_TYPES: tuple[str, ...] = ("Consumption", "Economy")
 _VALID_INTERVALS: tuple[str, ...] = ("billing", "day", "week", "month", "year")
+_DK_CURRENCY_CODE: str = "DKK"
 _INTERVAL_TO_VALUE: dict[DkGraphInterval, str] = {
     "day": "1",
     "week": "2",
@@ -171,6 +172,10 @@ class PyEcotrendIstaDK:  # numpydoc ignore=PR01
     def get_meter_types(self) -> MeterTypesResponse:
         """Return available meter types from the DK graphs API."""
         return cast(MeterTypesResponse, self._get_dk_graph("MeterType/GetMeterTypes"))
+
+    def get_currency_code(self) -> str:
+        """Return DK ISO 4217 currency code used for economy values."""
+        return _DK_CURRENCY_CODE
 
     def get_graph_data(
         self,
