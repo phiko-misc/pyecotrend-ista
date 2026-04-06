@@ -103,7 +103,7 @@ class PyEcotrendIstaDK:  # numpydoc ignore=PR01
             raise ServerError("DK authentication failed due to a request exception") from exc
 
         self._access_token = token["access_token"]
-        self._header["istaauthentication"] = f"Bearer {self._access_token}"
+        self._header["Authorization"] = f"Bearer {self._access_token}"
         return self._access_token
 
     def _get_dk(self, path: str) -> JsonResponse:
